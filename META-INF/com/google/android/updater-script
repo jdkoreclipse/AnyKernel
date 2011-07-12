@@ -1,0 +1,23 @@
+ui_print("AnyKernel Updater by Koush.");
+ui_print("Extracting System Files...");
+set_progress(1.000000);
+mount("ext4", "EMMC", "/dev/block/mmcblk0p25", "/system");
+delete_recursive("/system/lib/modules");
+package_extract_dir("system", "/system");
+unmount("/system");
+ui_print("Extracting Kernel files...");
+package_extract_dir("kernel", "/tmp");
+ui_print("Installing kernel...");
+set_perm(0, 0, 0777, "/tmp/dd");
+set_perm(0, 0, 0777, "/tmp/mkbootimg.sh");
+set_perm(0, 0, 0777, "/tmp/mkbootimg");
+set_perm(0, 0, 0777, "/tmp/unpackbootimg");
+ui_print("Repack Kernel Files...");
+run_program("/tmp/dd", "if=/dev/block/mmcblk0p22", "of=/tmp/boot.img");;
+run_program("/tmp/unpackbootimg", "/tmp/boot.img", "/tmp/");
+run_program("/tmp/mkbootimg.sh");
+ui_print("Flashing boot.img ...");
+assert(write_raw_image("/tmp/newboot.img", "boot"),
+       delete("/tmp/boot.img"));
+ui_print(" ");
+ui_print("Done! :D");
