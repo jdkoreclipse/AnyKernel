@@ -2,7 +2,7 @@ ui_print("AnyKernel Updater by Koush.");
 ui_print("");
 set_progress(1.000000);
 ui_print("Removing existing modules...");
-mount("ext4", "EMMC", "/dev/block/mmcblk0p25", "/system");
+run_program("/sbin/busybox", "mount", "/system");
 delete_recursive("/system/lib/modules");
 ui_print("Installing new modules...");
 package_extract_dir("system", "/system");
